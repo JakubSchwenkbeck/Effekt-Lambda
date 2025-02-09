@@ -70,3 +70,26 @@ def substitute(self: Expr, x: String, v: Expr): Expr = self match {
   case App(func, arg) =>
     App(substitute(func, x, v), substitute(arg, x, v))
 }
+
+// Perform one step of β-reduction on an expression.
+// When encountering an application of the form (λx. body) arg,
+// reduce it to substitute(body, x, arg).
+// If no reduction is possible, the expression is returned unchanged.
+def reduce(expr: Expr): Expr = expr match {
+  // β-reduction: (λx. body) arg  ==>  substitute(body, x, arg)
+  case App(Abs(param, body), arg) =>
+    substitute(body, param, arg)
+  // Recursively try to reduce the function part first.
+  case App(func, arg) =>
+    val newFunc = reduce(func) 
+    if (newFunc.equals(func)) {
+      App(func, reduce(arg))
+    } else {
+      App(newFunc, arg)
+    }
+  // Reduce inside abstractions.
+  case Abs(param, body) =>
+    Abs(param, reduce(body))
+  // Variables cannot be reduced.
+  case _ => expr
+}
