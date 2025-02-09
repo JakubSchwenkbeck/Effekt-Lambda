@@ -39,3 +39,7 @@ jobs:
 
       - name: "Checking flake inputs for stale & insecure nixpkgs versions..."
         uses: DeterminateSystems/flake-checker-action@main
+
+      - name: "Running Effekt tests..."
+        run: |
+          nix develop --command effekt src/test.effekt
