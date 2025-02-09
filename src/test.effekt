@@ -32,6 +32,8 @@ def main() = mainSuite("lib") {
 
     assertEqual(result, "(((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))")
   }
+
+
   test("Alpha Conversion") {
   val expr = Abs("x", App(Var("x"), Var("y")))
   // Define a set of used names that includes "x" (and optionally "y")
@@ -41,10 +43,42 @@ def main() = mainSuite("lib") {
   // Perform alpha conversion to avoid variable capture.
   val converted = alphaConvert(expr, usedNames)
   val result = lambdaToString(converted)
-  println("Alpha conversion result: " ++ result)
   
-  // The bound variable "x" should be renamed (e.g., to "x1"),
+  // The bound variable "x" should be renamed to "x1"
   // resulting in "(λx1. (x1 y))".
   assertEqual(result, "(λx1. (x1 y))")
 }
+test("β-reduction: Identity function") {
+  val id = Abs("x", Var("x"))
+  val expr = App(id, Var("y"))
+  val reduced = reduce(expr)
+  val result = lambdaToString(reduced)
+  println("β-reduction (identity): " ++ result)
+  // Expected: "y"
+  assertEqual(result, "y")
+}
+
+// Test for β-reduction of a constant function:
+// (λx. (λy. x)) a  should reduce to  (λy. a)
+test("β-reduction: Constant function") {
+  val const = Abs("x", Abs("y", Var("x")))
+  val expr = App(const, Var("a"))
+  val reduced = reduce(expr)
+  val result = lambdaToString(reduced)
+  println("β-reduction (constant): " ++ result)
+  // Expected: "(λy. a)"
+  assertEqual(result, "(λy. a)")
+}
+test("β-reduction: Reduce argument when function is irreducible") {
+  // Expression: f ((λx. x) y)
+  // Expected reduction: f y
+  val expr = App(Var("f"), App(Abs("x", Var("x")), Var("y")))
+  val reduced = reduce(expr)
+  val result = lambdaToString(reduced)
+  println("β-reduction (argument reduction): " ++ result)
+  // The identity redex (λx. x) y reduces to y,
+  // so the whole expression reduces to (f y)
+  assertEqual(result, "(f y)")
+}
+
 }
