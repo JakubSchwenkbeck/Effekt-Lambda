@@ -3,6 +3,11 @@ module src/lib
 import effekt
 import option
 
+// Define a Log effect
+interface Log {
+  def log(msg: String): Unit
+}
+
 // Lambda Calculus Abstract Syntax Tree (AST)
 type Expr {
   Var(name: String);
@@ -18,13 +23,33 @@ def toString(self: Expr): String = self match {
 }
 
 // Substitute all free occurrences of variable 'x' with expression 'v' in self.
-def substitute(self: Expr, x: String, v: Expr): Expr = self match {
+def substitute(self: Expr, x: String, v: Expr): Expr / Log = self match {
   case Var(name) =>
-    if (name == x) { v }
-    else { self }
+    if (name == x) {
+      do log(s"Substituting $x with ${toString(v)} in ${toString(self)}")
+      v
+    } else {
+      self
+    }
   case Abs(param, body) =>
-    if (param == x) { self }
-    else { Abs(param, substitute(body, x, v)) }
+    if (param == x) {
+      self
+    } else {
+      do log(s"Substituting $x with ${toString(v)} in ${toString(self)}")
+      Abs(param, substitute(body, x, v))
+    }
   case App(func, arg) =>
+    do log(s"Substituting $x with ${toString(v)} in ${toString(self)}")
     App(substitute(func, x, v), substitute(arg, x, v))
+}
+
+// Handler for the Log effect
+def runWithLogging[A](prog: () => A / Log): A = {
+  try {
+    prog()
+  } with Log {
+    def log(msg: String) = {
+      println(msg)
+    }
+  }
 }
