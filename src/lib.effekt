@@ -13,7 +13,7 @@ type Expr {
 // Convert an expression into its string representation.
 def toString(self: Expr): String = self match {
   case Var(name)        => name
-  case Abs(param, body) => "(\\" ++ param ++ ". " ++ toString(body) ++ ")"
+  case Abs(param, body) => "(λ" ++ param ++ ". " ++ toString(body) ++ ")"
   case App(func, arg)   => "(" ++ toString(func) ++ " " ++ toString(arg) ++ ")"
 }
 

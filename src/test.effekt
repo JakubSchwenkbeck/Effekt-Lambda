@@ -5,6 +5,13 @@ import src/lib
 
 def main() = mainSuite("lib") {
   test("Hello world") {
-    assertEqual(helloWorld(), "Hello, world!")
+  
+  val id = Abs("x", Var("x"));
+  val constant = Abs("x", Abs("y", Var("x")));
+  val apply = Abs("f", Abs("x", App(Var("f"), Var("x"))));
+  
+  val result = (toString(App(App(apply, id), constant))) // (((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))
+
+    assertEqual(result, "(((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))")
   }
 }

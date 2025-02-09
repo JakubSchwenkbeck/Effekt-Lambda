@@ -1,5 +1,11 @@
-module main // must be named same as the file!
+module main 
 
 import src/lib
 
-def main(): Unit = println(helloWorld())
+def main(): Unit = {
+  var id = Abs("x", Var("x"));
+  var constant = Abs("x", Abs("y", Var("x")));
+  var apply = Abs("f", Abs("x", App(Var("f"), Var("x"))));
+  
+  println(toString(App(App(apply, id), constant))) // (((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))
+}
