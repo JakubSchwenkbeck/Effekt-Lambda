@@ -7,5 +7,5 @@ def main(): Unit = {
   var constant = Abs("x", Abs("y", Var("x")));
   var apply = Abs("f", Abs("x", App(Var("f"), Var("x"))));
   
-  println(toString(App(App(apply, id), constant))) // (((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))
+  println(lambdaToString(App(App(apply, id), constant))) // (((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))
 }

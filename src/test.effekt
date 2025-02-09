@@ -1,24 +1,25 @@
 module src/test
 
 import test
+import set
 import src/lib
 
 def main() = mainSuite("lib") {
  test("Identity Function") {
     val id = Abs("x", Var("x"))
-    val result = toString(id)
+    val result = lambdaToString(id)
     assertEqual(result, "(λx. x)")
   }
 
   test("Abstraction") {
     val abs = Abs("x", Abs("y", Var("x")))
-    val result = toString(abs)
+    val result = lambdaToString(abs)
     assertEqual(result, "(λx. (λy. x))")
   }
 
   test("Application") {
     val app = App(Abs("x", Var("x")), Var("y"))
-    val result = toString(app)
+    val result = lambdaToString(app)
     assertEqual(result, "((λx. x) y)")
   }
 
@@ -27,8 +28,23 @@ def main() = mainSuite("lib") {
   val constant = Abs("x", Abs("y", Var("x")));
   val apply = Abs("f", Abs("x", App(Var("f"), Var("x"))));
   
-  val result = (toString(App(App(apply, id), constant))) // (((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))
+  val result = (lambdaToString(App(App(apply, id), constant))) // (((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))
 
     assertEqual(result, "(((λf. (λx. (f x))) (λx. x)) (λx. (λy. x)))")
   }
+  test("Alpha Conversion") {
+  val expr = Abs("x", App(Var("x"), Var("y")))
+  // Define a set of used names that includes "x" (and optionally "y")
+  // so that the bound variable "x" must be renamed.
+  val usedNames = union(singletonGeneric("x"), singletonGeneric("y"))
+  
+  // Perform alpha conversion to avoid variable capture.
+  val converted = alphaConvert(expr, usedNames)
+  val result = lambdaToString(converted)
+  println("Alpha conversion result: " ++ result)
+  
+  // The bound variable "x" should be renamed (e.g., to "x1"),
+  // resulting in "(λx1. (x1 y))".
+  assertEqual(result, "(λx1. (x1 y))")
+}
 }
