@@ -4,8 +4,25 @@ import test
 import src/lib
 
 def main() = mainSuite("lib") {
-  test("Hello world") {
-  
+ test("Identity Function") {
+    val id = Abs("x", Var("x"))
+    val result = toString(id)
+    assertEqual(result, "(λx. x)")
+  }
+
+  test("Abstraction") {
+    val abs = Abs("x", Abs("y", Var("x")))
+    val result = toString(abs)
+    assertEqual(result, "(λx. (λy. x))")
+  }
+
+  test("Application") {
+    val app = App(Abs("x", Var("x")), Var("y"))
+    val result = toString(app)
+    assertEqual(result, "((λx. x) y)")
+  }
+
+  test("Pretty Print longer lambda calculus") {
   val id = Abs("x", Var("x"));
   val constant = Abs("x", Abs("y", Var("x")));
   val apply = Abs("f", Abs("x", App(Var("f"), Var("x"))));
