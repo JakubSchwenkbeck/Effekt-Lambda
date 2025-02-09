@@ -80,5 +80,19 @@ test("β-reduction: Reduce argument when function is irreducible") {
   // so the whole expression reduces to (f y)
   assertEqual(result, "(f y)")
 }
+test("β-reduction: Nested abstraction application") {
+  // Expression: (λx. (λy. x y)) z
+  val expr = App(Abs("x", Abs("y", App(Var("x"), Var("y")))), Var("z"))
+
+  // Perform reduction
+  val reduced = reduce(expr)
+
+  // Convert result to string
+  val result = lambdaToString(reduced)
+  println("Nested abstraction reduction: " ++ result)
+
+  // Expected output: λy. (z y)
+  assertEqual(result, "(λy. (z y))")
+}
 
 }
