@@ -1,3 +1,30 @@
 module src/lib
 
-def helloWorld(): String = "Hello, world!"
+import effekt
+import option
+
+// Lambda Calculus Abstract Syntax Tree (AST)
+type Expr {
+  Var(name: String);
+  Abs(param: String, body: Expr);
+  App(func: Expr, arg: Expr)
+}
+
+// Convert an expression into its string representation.
+def toString(self: Expr): String = self match {
+  case Var(name)        => name
+  case Abs(param, body) => "(\\" ++ param ++ ". " ++ toString(body) ++ ")"
+  case App(func, arg)   => "(" ++ toString(func) ++ " " ++ toString(arg) ++ ")"
+}
+
+// Substitute all free occurrences of variable 'x' with expression 'v' in self.
+def substitute(self: Expr, x: String, v: Expr): Expr = self match {
+  case Var(name) =>
+    if (name == x) { v }
+    else { self }
+  case Abs(param, body) =>
+    if (param == x) { self }
+    else { Abs(param, substitute(body, x, v)) }
+  case App(func, arg) =>
+    App(substitute(func, x, v), substitute(arg, x, v))
+}
