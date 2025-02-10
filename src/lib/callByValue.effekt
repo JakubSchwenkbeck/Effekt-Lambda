@@ -1,0 +1,17 @@
+module src/lib/callByValue
+
+import src/lib/ast
+import src/lib/beta
+import src/lib/alpha
+
+// Call-by-value evaluation strategy
+def callByValueEval(expr: Expr): Expr = expr match {
+  case App(func, arg) =>
+    val evaluatedArg = callByValueEval(arg)
+    func match {
+      case Abs(param, body) => substitute(body, param, evaluatedArg)
+      case _ => App(callByValueEval(func), evaluatedArg)
+    }
+  case Abs(param, body) => Abs(param, callByValueEval(body))
+  case _ => expr
+}

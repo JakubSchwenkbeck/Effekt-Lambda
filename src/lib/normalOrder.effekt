@@ -1,0 +1,16 @@
+module src/lib/normalOrder
+
+import src/lib/ast
+import src/lib/beta
+import src/lib/alpha
+
+// Normal-order evaluation strategy
+def normalOrderEval(expr: Expr): Expr = expr match {
+  case App(func, arg) =>
+    func match {
+      case Abs(param, body) => substitute(body, param, arg)
+      case _ => App(normalOrderEval(func), arg)
+    }
+  case Abs(param, body) => Abs(param, normalOrderEval(body))
+  case _ => expr
+}
