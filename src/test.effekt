@@ -6,7 +6,8 @@ import src/lib/ast
 import src/lib/vars
 import src/lib/alpha
 import src/lib/beta
-
+import src/lib/callByValue
+import src/lib/normalOrder
 
 def main() = mainSuite("lib") {
  test("Identity Function") {
@@ -98,5 +99,15 @@ test("β-reduction: Nested abstraction application") {
   // Expected output: λy. (z y)
   assertEqual(result, "(λy. (z y))")
 }
+  test("Call-by-Value Evaluation") {
+    val expr = App(Abs("x", Var("x")), Var("y"))
+    val result = callByValueEval(expr)
+    assertEqual(lambdaToString(result), "y")
+  }
 
+  test("Normal-Order Evaluation") {
+    val expr = App(Abs("x", Var("x")), Var("y"))
+    val result = normalOrderEval(expr)
+    assertEqual(lambdaToString(result), "y")
+  }
 }
