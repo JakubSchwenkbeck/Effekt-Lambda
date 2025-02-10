@@ -1,9 +1,6 @@
 module src/lib/vars
 
-import effekt
-import option
 import set
-import bytearray
 import src/lib/ast
 
 // Generate a fresh variable name given a base name and a set of used names.

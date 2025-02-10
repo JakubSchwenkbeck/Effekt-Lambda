@@ -1,6 +1,5 @@
 module main 
 
-import src/lib
 import src/lib/ast
 
 def main(): Unit = {

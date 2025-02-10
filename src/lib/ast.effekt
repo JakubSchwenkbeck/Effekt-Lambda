@@ -1,11 +1,5 @@
 module src/lib/ast
 
-import effekt
-import option
-import set
-import bytearray
-
-
 // Lambda Calculus Abstract Syntax Tree (AST)
 type Expr {
   Var(name: String);
