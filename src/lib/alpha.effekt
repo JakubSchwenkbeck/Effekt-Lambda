@@ -1,0 +1,37 @@
+module src/lib/alpha
+
+import set
+import src/lib/ast
+import src/lib/vars
+
+
+// Perform alpha conversion on an expression to avoid variable capture.
+// It renames the bound variable of an abstraction to a fresh name.
+def alphaConvert(expr: Expr, used: Set[String]): Expr = expr match {
+  case Var(name) => expr
+  case Abs(param, body) =>
+    val newParam = freshVar(param, used)
+    // Replace the bound variable with the new name in the body.
+    Abs(newParam, substitute(body, param, Var(newParam)))
+  case App(func, arg) =>
+    App(alphaConvert(func, used), alphaConvert(arg, used))
+}
+
+// Substitute all free occurrences of variable 'x' with expression 'v' in self.
+def substitute(self: Expr, x: String, v: Expr): Expr = self match {
+  case Var(name) =>
+    if (name == x) { v } else { self }
+  case Abs(param, body) =>
+    if (param == x) {
+      // 'x' is bound here, so do not substitute inside.
+      self
+    } else {
+      // To avoid capture, first alpha-convert the body using the union
+      // of free variables in v and self.
+      val usedNames = union(freeVars(v), freeVars(self))
+      val newBody = alphaConvert(body, usedNames)
+      Abs(param, substitute(newBody, x, v))
+    }
+  case App(func, arg) =>
+    App(substitute(func, x, v), substitute(arg, x, v))
+}

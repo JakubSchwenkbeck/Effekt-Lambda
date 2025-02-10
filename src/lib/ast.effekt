@@ -1,0 +1,15 @@
+module src/lib/ast
+
+// Lambda Calculus Abstract Syntax Tree (AST)
+type Expr {
+  Var(name: String);
+  Abs(param: String, body: Expr);
+  App(func: Expr, arg: Expr)
+}
+
+// Convert an expression into its string representation.
+def lambdaToString(self: Expr): String = self match {
+  case Var(name)        => name
+  case Abs(param, body) => "(λ" ++ param ++ ". " ++ lambdaToString(body) ++ ")"
+  case App(func, arg)   => "(" ++ lambdaToString(func) ++ " " ++ lambdaToString(arg) ++ ")"
+}

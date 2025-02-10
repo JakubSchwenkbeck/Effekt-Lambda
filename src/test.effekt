@@ -2,7 +2,11 @@ module src/test
 
 import test
 import set
-import src/lib
+import src/lib/ast
+import src/lib/vars
+import src/lib/alpha
+import src/lib/beta
+
 
 def main() = mainSuite("lib") {
  test("Identity Function") {
