@@ -1,6 +1,7 @@
 module main 
 
 import src/lib
+import src/lib/ast
 
 def main(): Unit = {
   var id = Abs("x", Var("x"));

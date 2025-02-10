@@ -3,6 +3,9 @@ module src/test
 import test
 import set
 import src/lib
+import src/lib/ast
+import src/lib/vars
+
 
 def main() = mainSuite("lib") {
  test("Identity Function") {
