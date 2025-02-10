@@ -93,3 +93,13 @@ def reduce(expr: Expr): Expr = expr match {
   // Variables cannot be reduced.
   case _ => expr
 }
+
+// Evaluate an expression to normal form by repeatedly applying beta reduction.
+def eval(expr: Expr): Expr = {
+  val reduced = reduce(expr)
+  if (reduced.equals(expr)) {
+    expr
+  } else {
+    eval(reduced)
+   }
+}
