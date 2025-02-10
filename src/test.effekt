@@ -8,7 +8,7 @@ import src/lib/alpha
 import src/lib/beta
 import src/lib/callByValue
 import src/lib/normalOrder
-
+import src/lib/church
 def main() = mainSuite("lib") {
  test("Identity Function") {
     val id = Abs("x", Var("x"))
@@ -109,5 +109,13 @@ test("β-reduction: Nested abstraction application") {
     val expr = App(Abs("x", Var("x")), Var("y"))
     val result = normalOrderEval(expr)
     assertEqual(lambdaToString(result), "y")
+  }
+ test("Church Numerals") {
+
+    assertEqual(lambdaToString(zero), "(λf. (λx. x))")
+    assertEqual(lambdaToString(reduce(one)), "(λf. (λx. (f ((λx. x) x))))") // needs to be reduced automatically!!!
+  
+    assertEqual(churchToString(zero), "0")
+
   }
 }
