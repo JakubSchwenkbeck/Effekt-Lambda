@@ -2,23 +2,25 @@ module src/lib/church
 
 import set
 import src/lib/ast
-import src/lib/beta
-
-/// This should be reduced at some point, maybe by Effekts
 
 // Church Numerals
-val zero = (Abs("f", Abs("x", Var("x")))) 
-def succ(n: Expr): Expr = Abs("f", Abs("x", App(Var("f"), App(App(n, Var("f")), Var("x")))))
-val one = succ(zero)
-val two = succ(one)
-val three = succ(two)
+val zero = Abs("f", Abs("x", Var("x")))
+val one = Abs("f", Abs("x", App(Var("f"), Var("x"))))
+val two = Abs("f", Abs("x", App(Var("f"), App(Var("f"), Var("x")))))
+val three = Abs("f", Abs("x", App(Var("f"), App(Var("f"), App(Var("f"), Var("x"))))))
 
 // Function to convert a Church numeral to a string representation
 def churchToString(n: Expr): String = n match {
   case Abs("f", Abs("x", body)) => body match {
     case Var("x") => "0"
-    case App(Var("f"), rest) => "1" ++ churchToString(rest)
+    case App(Var("f"), rest) => "1" ++ churchToStringHelper(rest)
     case _ => "?"
   }
+  case _ => "?"
+}
+
+def churchToStringHelper(expr: Expr): String = expr match {
+  case Var("x") => ""
+  case App(Var("f"), rest) => "1" ++ churchToStringHelper(rest)
   case _ => "?"
 }
